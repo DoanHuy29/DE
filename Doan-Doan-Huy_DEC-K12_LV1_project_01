@@ -1,0 +1,17 @@
+cd Desktop
+cd Project_1
+curl -o tmdb-movies.csv https://raw.githubusercontent.com/yinghaoz1/tmdb-movie-dataset-analysis/master/tmdb-movies.csv
+awk -F, 'NR > 1 {gsub(/^[ \t]+|[ \t]+$/, "", $19); gsub(/^[ \t]+|[ \t]+$/, "", $16); if ($19 ~ /^[1-2][0-9][0-9][0-9]$/ && $16 ~ /^(0?[1-9]|1[0-2])\/(0?[1-9]|[12][0-9]|3[01])\/([0-9][0-9])$/) {split($16, dateParts, "/"); formattedDate = $19 "-" sprintf("%02d", dateParts[1]) "-" sprintf("%02d", dateParts[2]); print formattedDate, $0;}}' tmdb-movies.csv | sort | cut -d ' ' -f2- > sorted-by-release-day.csv # 1
+awk -F, 'NR==1 {print; next} {gsub(/^[ \t]+|[ \t]+$/, "", $18); if ($18 ~ /^[0-9]*\.?[0-9]+$/ && ($18 + 0) > 7.5 && ($18 + 0) <= 10) print}' tmdb-movies.csv > high-imdb-movies.csv # 2
+awk -F, 'NR==1 {print; next} {gsub(/^[ \t]+|[ \t]+$/, "", $5); if ($5 ~ /^[0-9]+$/ && ($5 + 0 > 0)) {print $0}}' tmdb-movies.csv | sort -t, -k5,5n | awk 'NR==2 {min=$0} {max=$0} END {print "Lowest revenue: " min; print "Highest revenue: " max}' # 3
+awk -F, 'NR==1 {next} {gsub(/^[ \t]+|[ \t]+$/, "", $5); if ($5 ~ /^[0-9]+$/ && ($5 + 0 > 0)) total += $5} END {print "Total revenue: " total}' tmdb-movies.csv # 4
+awk -F, 'NR > 1 {gsub(/^[ \t]+|[ \t]+$/, "", $4); gsub(/^[ \t]+|[ \t]+$/, "", $5); if ($5 ~ /^[0-9]+(\.[0-9]+)?$/ && $4 ~ /^[0-9]+(\.[0-9]+)?$/ && $5 > 0 && $4 > 0) {profit = $5 - $4; print $6, profit}}' tmdb-movies.csv | sort -k2,2nr | head -n 10 # 5
+cut -d, -f9 tmdb-movies.csv | tr '|' '\n' | sort | uniq -c | sort -k1,1nr | awk '$2 ~ /^[a-zA-Z ]+$/' | head -n 1 # 6
+cut -d, -f7 tmdb-movies.csv | tr '|' '\n' | sort | uniq -c | sort -k1,1nr | awk '$2 ~ /^[a-zA-Z ]+$/' | head -n 1 # 6
+cut -d, -f14 tmdb-movies.csv | tr '|' '\n' | sort | uniq -c | sort -k1,1nr | awk '$2 ~ /^[a-zA-Z ]+$/' | head -n 20 # 7
+
+Idea để có thêm phân tích cho dữ liệu thì hiện tại chưa có, nhưng những thắc mắc trong qua trình làm bài lại có:
+	- Trong quá trình làm phát hiện ra dữ liệu thô cần lọc, nhưng nó bị sai vài chỗ thì mình chỉ cần lọc chứ có cần sửa thông tin lại cho đúng không? Hay trong quá trình làm thực tế mình sẽ lọc riêng dữ liệu lỗi ra rồi xử lý sau
+	- Đơn giản như lúc tính tổng doanh thu, không may có phim có doanh thu là 2 triệu đô mà người ta nhập vào là 2, thành ra phần tính tổng mình sẽ không được đúng, nó phải có điều kiện cụ thể gì đó để lọc thì sẽ tối ưu hơn.
+	
+Do chưa có kinh nghiệm thực tế khi xử lý nên các câu code trên của em chỉ đưa ra kết quả dựa trên những điều kiện lọc sơ sài mà em cho là đúng. Mong anh có thể đưa ra nhận xét cũng như lời khuyên giúp em cải thiện, em cảm ơn
