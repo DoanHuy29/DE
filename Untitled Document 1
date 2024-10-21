@@ -1,0 +1,4 @@
+Theo em tìm hiểu thì có một vài cách để rút ngắn thời gian lấy dữ liệu, nhưng vì không có thông tin chi tiết về API mình truy cập để lấy thông tin nên em đã bị cấm một khoảng thời gian truy cập API do không set up thời gian chờ mỗi requests. Sau đó em set up thời gian chờ mỗi request là 0.1s nhưng nó lại tốn thời gian hơn tính toán cụ thể là 16-17 tiếng để kéo hết 200k dữ liệu, và một vài cách em thấy khả dĩ để rút ngắn thời gian kéo dữ liệu sau khi tham khảo AI:
+	- Tối ưu kết nối mạng: Sử dụng requests.Session() để giữ kết nối lâu hơn thay vì tạo một kết nối mới mỗi lần gửi yêu cầu.
+	- Sử dụng Multi- threading để tăng lượng requests trong 1 lần (nhưng không có thông tin chi tiết về số lượng requests tổi đa trong 1 lần truy cập)
+	- Tăng số lượng proxy để gửi requests (nhưng kèm theo nhiều điều kiện phức tạp cũng như phải bù thêm chi phí)
